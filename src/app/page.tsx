@@ -1,53 +1,72 @@
+'use client';
+import { useState } from 'react';
+
 export default function Home() {
+  const [input, setInput] = useState('');
+  const [reply, setReply] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function sendMsg() {
+    if (!input) return;
+    setLoading(true);
+    setReply('AI 思考中...');
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: input })
+    });
+
+    const data = await res.json();
+    setReply(data.choices?.[0]?.message?.content || 'AI 没有返回内容');
+    setLoading(false);
+  }
+
   return (
-    <div style={{
-      maxWidth: "600px",
-      margin: "50px auto",
-      padding: "30px",
-      fontFamily: "Arial, sans-serif",
-      textAlign: "center"
-    }}>
-      <h1 style={{ fontSize: "32px", color: "#111" }}>💬 我的 AI 工具</h1>
-      <p style={{ fontSize: "18px", color: "#666", marginBottom: "30px" }}>
-        输入你的问题，AI 马上为你回答
-      </p>
+    <div style={{ maxWidth: 600, margin: '50px auto', padding: 20 }}>
+      <h1 style={{ textAlign: 'center' }}>🤖 我的AI聊天机器人</h1>
 
       <div style={{
-        border: "1px solid #eee",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+        border: '1px solid #ddd',
+        padding: 15,
+        borderRadius: 8,
+        minHeight: 150,
+        marginBottom: 15,
+        whiteSpace: 'pre-wrap'
       }}>
-        <textarea
-          placeholder="请输入你想问的内容..."
-          style={{
-            width: "100%",
-            height: "120px",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            padding: "12px",
-            fontSize: "16px",
-            resize: "none",
-            marginBottom: "15px"
-          }}
-        ></textarea>
-
-        <button style={{
-          backgroundColor: "#0071e3",
-          color: "#fff",
-          border: "none",
-          padding: "12px 25px",
-          fontSize: "16px",
-          borderRadius: "8px",
-          cursor: "pointer"
-        }}>
-          🚀 发送给 AI
-        </button>
+        {reply || '💬 请问你想问什么？'}
       </div>
 
-      <div style={{ marginTop: "40px", color: "#999", fontSize: "14px" }}>
-        © 2025 我的第一个 AI 网站 | 由我亲手部署上线
-      </div>
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        rows={4}
+        style={{
+          width: '100%',
+          padding: 12,
+          fontSize: 16,
+          marginBottom: 10,
+          borderRadius: 6
+        }}
+        placeholder="在这里输入你的问题..."
+      />
+
+      <button
+        onClick={sendMsg}
+        disabled={loading}
+        style={{
+          width: '100%',
+          padding: 14,
+          fontSize: 16,
+          backgroundColor: '#0070f3',
+          color: 'white',
+          border: 'none',
+          borderRadius: 6,
+          cursor: 'pointer'
+        }}
+      >
+        {loading ? '⏳ AI 思考中...' : '🚀 发送给 AI'}
+      </button>
     </div>
   );
 }
