@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
+import useLanguage from '../hooks/useLanguage';
 
 export default function Home() {
+  const { lang, t, changeLang } = useLanguage();
   const [input, setInput] = useState('');
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
@@ -9,7 +11,7 @@ export default function Home() {
   async function sendMsg() {
     if (!input) return;
     setLoading(true);
-    setReply('AI 思考中...');
+    setReply(t.thinking);
 
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -18,55 +20,72 @@ export default function Home() {
     });
 
     const data = await res.json();
-    setReply(data.choices?.[0]?.message?.content || 'AI 没有返回内容');
+    setReply(data.choices?.[0]?.message?.content || t.error);
     setLoading(false);
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: '50px auto', padding: 20 }}>
-      <h1 style={{ textAlign: 'center' }}>🤖 我的AI聊天机器人</h1>
-
-      <div style={{
-        border: '1px solid #ddd',
-        padding: 15,
-        borderRadius: 8,
-        minHeight: 150,
-        marginBottom: 15,
-        whiteSpace: 'pre-wrap'
-      }}>
-        {reply || '💬 请问你想问什么？'}
+    <div style={{ maxWidth: 700, margin: '0 auto', padding: '20px' }}>
+      <div style={{ textAlign: 'right', marginBottom: 10 }}>
+        <button
+          onClick={() => changeLang(lang === 'en' ? 'zh' : 'en')}
+          style={{
+            padding: '6px 12px',
+            border: '1px solid #1476ff',
+            backgroundColor: '#fff',
+            color: '#1476ff',
+            borderRadius: '6px',
+            cursor: 'pointer'
+          }}
+        >
+          {lang === 'en' ? t.switchToChinese : t.switchToEnglish}
+        </button>
       </div>
 
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        rows={4}
-        style={{
-          width: '100%',
-          padding: 12,
-          fontSize: 16,
-          marginBottom: 10,
-          borderRadius: 6
-        }}
-        placeholder="在这里输入你的问题..."
-      />
+      <h1 style={{ textAlign: 'center', color: '#1476ff' }}>{t.title}</h1>
 
-      <button
-        onClick={sendMsg}
-        disabled={loading}
-        style={{
-          width: '100%',
-          padding: 14,
-          fontSize: 16,
-          backgroundColor: '#0070f3',
-          color: 'white',
-          border: 'none',
-          borderRadius: 6,
-          cursor: 'pointer'
-        }}
-      >
-        {loading ? '⏳ AI 思考中...' : '🚀 发送给 AI'}
-      </button>
+      <div style={{
+        height: '400px',
+        border: '1px solid #eee',
+        borderRadius: '10px',
+        padding: '20px',
+        overflowY: 'auto',
+        backgroundColor: '#f9f9f9',
+        marginBottom: '15px'
+      }}>
+        {reply || t.start}
+      </div>
+
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          rows={3}
+          placeholder={t.placeholder}
+          style={{
+            flex: 1,
+            padding: '12px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            fontSize: '14px'
+          }}
+        />
+        <button
+          onClick={sendMsg}
+          disabled={loading}
+          style={{
+            padding: '0 20px',
+            backgroundColor: '#1476ff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '16px',
+            cursor: 'pointer'
+          }}
+        >
+          {loading ? t.sending : t.send}
+        </button>
+      </div>
     </div>
   );
 }

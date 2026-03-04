@@ -1,0 +1,11 @@
+{
+    "title": "AI 智能聊天助手",
+    "start": "👋 请输入消息开始聊天...",
+    "placeholder": "输入你的问题...",
+    "sending": "发送中...",
+    "send": "发送",
+    "thinking": "AI 思考中...",
+    "error": "未获取到回复",
+    "switchToChinese": "中文",
+    "switchToEnglish": "English"
+  }

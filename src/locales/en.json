@@ -1,0 +1,11 @@
+{
+    "title": "AI Chat Assistant",
+    "start": "👋 Type a message to start chatting...",
+    "placeholder": "Type your question here...",
+    "sending": "Sending...",
+    "send": "Send",
+    "thinking": "AI is thinking...",
+    "error": "Failed to get reply",
+    "switchToChinese": "中文",
+    "switchToEnglish": "English"
+  }
